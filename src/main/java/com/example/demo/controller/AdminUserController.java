@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.entity.User;
+import com.example.demo.form.UserRegisterForm;
 import com.example.demo.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,6 +27,9 @@ public class AdminUserController {
 public String adminUser(Model model){
   List<User> users = userService.getAllUsers();
   model.addAttribute("users", users);
+  if(!model.containsAttribute("userRegisterForm")){
+    model.addAttribute("userRegisterFrom", new UserRegisterForm());
+  }
   return "adminUserView";
 }
 
