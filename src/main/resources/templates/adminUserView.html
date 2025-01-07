@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8">
@@ -8,24 +8,35 @@
 </head>
 
 <body>
-  <h2>ユーザー登録フォーム</h2>
-  <form th:action="@{/register}" method="post" th:object="${userRegisterForm}">
-    <label for="userName">ユーザー名</label>
-    <input type="text" th:field="*{userName}"><br>
-    <div th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" style="color: red;"></div>
 
-    <label for="password">パスワード</label>
-    <input type="password" th:field="*{password}">
-    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
+  <div th:if="${param.loggedIn}" style="color:green;">ログインしました</div>
+  <div th:if="${param.loggedOut}" style="color:red;">ログアウトしました</div>
 
-    <label for="roleId">ロール</label>
-    <select th:field="*{roleId}">
-      <option value="1">一般ユーザー</option>
-      <option value="2">管理者ユーザー</option>
-    </select>
-    <div th:if="${#fields.hasErrors('roleId')}" th:errors="*{roleId}" style="color: red;"></div>
-    <button type="submit">登録</button>
-  </form>
+  <p sec:authorize="isAuthenticated()">
+    ログインユーザー:<span sec:authentication="principal.usename"></span><br>
+    ロール:<sapn sec:authentication="principal.authorities"></sapn>
+  </p>
+
+  <div sec:authorize="hasRole('ADMIN')">
+    <h2>ユーザー登録フォーム</h2>
+    <form th:action="@{/register}" method="post" th:object="${userRegisterForm}">
+      <label for="userName">ユーザー名</label>
+      <input type="text" th:field="*{userName}"><br>
+      <div th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" style="color: red;"></div>
+
+      <label for="password">パスワード</label>
+      <input type="password" th:field="*{password}">
+      <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
+
+      <label for="roleId">ロール</label>
+      <select th:field="*{roleId}">
+        <option value="1">一般ユーザー</option>
+        <option value="2">管理者ユーザー</option>
+      </select>
+      <div th:if="${#fields.hasErrors('roleId')}" th:errors="*{roleId}" style="color: red;"></div>
+      <button type="submit">登録</button>
+    </form>
+  </div>
 
   <p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
   <p th:if="${failureMessage}" th:text="${failureMessage}" style="color: red;"></p>
